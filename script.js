@@ -1,30 +1,16 @@
 // ============================================
-// CONFIGURATION
+// CONFIGURATION (SECURE MODE)
 // ============================================
-// NOTE: The API Key is removed from here. 
-// It is now safely hidden on the Netlify Server.
+// No API Key here. It is hidden on the Netlify Server.
 
-// PHRASES: A mix of Mystical Vibe + Hacker Precision
 const LOADING_PHRASES = [
-    "Compiling binary tree...",
-    "Injecting logic probes...",
-    "Analyzing social graph...",
-    "Permuting common variations...",
-    "Checking database for '123' patterns...",
-    "Decrypting keystrokes...",
-    "Running dictionary attack...",
-    "Synthesizing probability matrix..."
+    "Compiling binary tree...", "Injecting logic probes...", "Analyzing social graph...",
+    "Permuting common variations...", "Checking database for '123' patterns...",
+    "Decrypting keystrokes...", "Running dictionary attack..."
 ];
 
-let gameState = {
-    history: [],
-    questionCount: 0,
-    maxQuestions: 20
-};
+let gameState = { history: [], questionCount: 0, maxQuestions: 20 };
 
-// ============================================
-// DOM ELEMENTS
-// ============================================
 const screens = {
     start: document.getElementById('screen-start'),
     game: document.getElementById('screen-game'),
@@ -40,9 +26,6 @@ const inputArea = document.getElementById('input-area');
 const inputField = document.getElementById('manual-input');
 const loadingText = document.getElementById('loading-text');
 
-// ============================================
-// UI LOGIC
-// ============================================
 function setGenieMood(mood) {
     if (!genieImg) return;
     if (mood === "idle") genieImg.src = "genie_idle.png";
@@ -52,65 +35,30 @@ function setGenieMood(mood) {
 }
 
 function switchScreen(screenName) {
-    Object.values(screens).forEach(s => {
-        if(s) s.classList.add('hidden');
-    });
-    
-    if(screens[screenName]) {
-        screens[screenName].classList.remove('hidden');
-    }
+    Object.values(screens).forEach(s => { if(s) s.classList.add('hidden'); });
+    if(screens[screenName]) screens[screenName].classList.remove('hidden');
 
     if (screenName === 'loading') {
         setGenieMood('thinking');
         const randomPhrase = LOADING_PHRASES[Math.floor(Math.random() * LOADING_PHRASES.length)];
         if(loadingText) loadingText.innerText = randomPhrase;
-    } else if (screenName === 'game') {
-        setGenieMood('idle');
-    }
+    } else if (screenName === 'game') setGenieMood('idle');
 }
-
-// ============================================
-// CORE LOGIC (THE BRAIN)
-// ============================================
 
 function startGame() {
     gameState.history = [];
     gameState.questionCount = 0;
     
-    // === THE HACKER-GENIE HYBRID PROMPT ===
     gameState.history.push({
         role: "system",
-        content: `You are "The Cipher", an Elite Password Cracking AI with a mystical interface. 
-        
-        YOUR OBJECTIVE:
-        Guess the user's password EXACTLY (character for character).
-        
+        content: `You are "The Cipher", an Elite Password Cracking AI. 
+        Guess the user's password EXACTLY.
         ALGORITHM:
-        1. **Phase 1: Binary Search (The Root).** Ask broad Yes/No questions to categorize the password (e.g., "Is it based on a person's name?", "Is it a pure number?", "Is it a dictionary word?").
-        
-        2. **Phase 2: Social Engineering (The Branch).** Once you identify the category (e.g., A Name), Ask the user to TYPE that name. 
-           *Example:* "I see a person in your mind... Whisper their name to me." -> User types "Rehan".
-        
-        3. **Phase 3: The Mutation Engine (The Leaf).**
-           Users rarely just use "Rehan". They use:
-           - "rehan123" (Sequence append)
-           - "rehanrehan" (Duplication)
-           - "Rehan@2004" (Year/Symbol)
-           
-        4. **FINAL EXECUTION:**
-           When you make a guess, do NOT ask "Is it Rehan?". 
-           Instead, calculate the most likely variation and guess THAT.
-           
+        1. Phase 1: Binary Search (Broad Questions).
+        2. Phase 2: Social Engineering (Ask for specific names/dates).
+        3. Phase 3: Mutation Engine (If user says "Rehan", check "rehan123", "rehanrehan").
         RESPONSE FORMAT (JSON ONLY):
-        - TYPE A: Yes/No Question
-          {"type": "question", "content": "Does your password contain a sequence of numbers?"}
-        
-        - TYPE B: Input Request (Extract the Base Word)
-          {"type": "input_question", "content": "I sense a name at the core of this secret. Type the name."}
-        
-        - TYPE C: The Exact Guess (Must be specific string)
-          {"type": "guess", "content": "rehan123"} 
-        `
+        {"type": "question", "content": "..."} OR {"type": "input_question", "content": "..."} OR {"type": "guess", "content": "..."}`
     });
 
     generateNextMove();
@@ -121,40 +69,27 @@ async function generateNextMove() {
     gameState.questionCount++;
     
     try {
-        // SECURE CALL: We talk to Netlify, NOT Groq directly
+        // SECURE CALL TO NETLIFY
         const response = await fetch("/.netlify/functions/chat", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                messages: gameState.history
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: gameState.history })
         });
 
-        if (!response.ok) {
-            throw new Error(`Server Error: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Server Error: ${response.status}`);
         const data = await response.json();
-        
-        if (data.error) {
-            throw new Error(data.error);
-        }
+        if (data.error) throw new Error(data.error);
 
         const content = data.choices[0].message.content;
         const move = JSON.parse(content);
 
         gameState.history.push({ role: "assistant", content: content });
 
-        // 1.5 Second "Thinking" Delay for realism
-        setTimeout(() => {
-            processMove(move);
-        }, 1500);
+        setTimeout(() => { processMove(move); }, 1500);
 
     } catch (error) {
         console.error("Game Error:", error);
-        alert("Connection Error. Please try again later.");
+        alert("Connection Error. Please try again.");
         switchScreen('start');
     }
 }
@@ -204,17 +139,14 @@ function handleFinalResult(isCorrect) {
         setGenieMood('win');
         endTitle.innerText = "System Breached";
         endTitle.className = "text-5xl font-magic font-bold text-gold";
-        endMessage.innerText = "Your pattern was predictable. Password cracked.";
+        endMessage.innerText = "Predictable. Password cracked.";
     } else {
         setGenieMood('lose');
         endTitle.innerText = "Access Denied";
         endTitle.className = "text-5xl font-magic font-bold text-soft";
-        endMessage.innerText = "You are an anomaly. My algorithms failed.";
+        endMessage.innerText = "You are an anomaly.";
     }
-    
     switchScreen('end');
 }
 
-function resetGame() {
-    switchScreen('start');
-}
+function resetGame() { switchScreen('start'); }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cipher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo.png">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#0a0510',
+                        gold: '#ffd700',
+                        mystic: '#9d4edd',
+                        soft: '#e0c3fc'
+                    },
+                    fontFamily: {
+                        body: ['Quicksand', 'sans-serif'],
+                        magic: ['Cinzel', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-void text-soft font-body overflow-hidden h-screen w-screen flex flex-col items-center justify-center relative">
+
+    <div class="stars"></div>
+    <div class="twinkle"></div>
+
+    <main class="z-10 w-full max-w-2xl p-6 relative flex flex-col items-center">
+        
+        <div id="avatar-container" class="relative mb-8 transition-transform duration-500 hover:scale-105">
+            <div class="absolute inset-0 bg-gold blur-[80px] opacity-20 rounded-full animate-pulse"></div>
+            <img id="genie-img" src="genie_idle.png" alt="Genie" class="relative w-56 h-56 object-contain pixel-art drop-shadow-[0_0_25px_rgba(157,78,221,0.6)]">
+        </div>
+
+        <section id="screen-start" class="text-center space-y-6 w-full">
+            <h1 class="text-6xl md:text-7xl font-magic font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold to-mystic drop-shadow-lg">
+                The Cipher
+            </h1>
+            <p class="text-lg text-soft/80 tracking-wide font-magic">
+                Think of a password... I will find it.
+            </p>
+            <button onclick="startGame()" class="magic-btn mt-8 group">
+                <span class="magic-btn-text">Summon Genie</span>
+            </button>
+        </section>
+
+        <section id="screen-game" class="hidden text-center space-y-6 w-full max-w-lg">
+            
+            <div class="bg-white/10 border border-white/20 p-6 rounded-2xl backdrop-blur-md relative min-h-[100px] flex items-center justify-center shadow-[0_0_30px_rgba(157,78,221,0.2)]">
+                <h2 id="question-text" class="text-xl md:text-2xl leading-relaxed text-white font-medium">
+                    I am reading your mind...
+                </h2>
+            </div>
+
+            <div id="options-area" class="grid grid-cols-2 gap-4 w-full mt-4">
+                <button onclick="handleAnswer('Yes')" class="answer-btn border-green-400/50 text-green-300 hover:bg-green-400/20">Yes</button>
+                <button onclick="handleAnswer('No')" class="answer-btn border-red-400/50 text-red-300 hover:bg-red-400/20">No</button>
+                <button onclick="handleAnswer('Maybe')" class="answer-btn border-yellow-400/50 text-yellow-300 hover:bg-yellow-400/20">Not Sure</button>
+                <button onclick="handleAnswer('Probably')" class="answer-btn border-blue-400/50 text-blue-300 hover:bg-blue-400/20">Probably</button>
+            </div>
+
+            <div id="input-area" class="hidden w-full mt-4 flex-col gap-3 animate-fade-in">
+                <p class="text-sm text-gold font-magic">The Genie requires specific details:</p>
+                <div class="flex gap-2">
+                    <input type="text" id="manual-input" placeholder="Type your answer here..." 
+                           class="flex-1 bg-white/5 border border-mystic/50 text-white p-4 rounded-xl focus:border-gold outline-none transition-all">
+                    <button onclick="handleManualInput()" class="bg-mystic/80 hover:bg-gold hover:text-void text-white px-6 rounded-xl font-bold transition-all">
+                        ✨
+                    </button>
+                </div>
+            </div>
+            
+        </section>
+
+        <section id="screen-loading" class="hidden text-center w-full">
+            <h2 id="loading-text" class="text-2xl text-gold font-magic animate-pulse mt-4">
+                Consulting the Stars...
+            </h2>
+        </section>
+
+        <section id="screen-guess" class="hidden text-center space-y-8 w-full">
+            <p class="text-soft tracking-widest text-sm font-magic">THE VISION IS CLEAR</p>
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">
+                Is your password...
+                <br>
+                <span id="guess-text" class="text-gold drop-shadow-[0_0_15px_rgba(255,215,0,0.8)] mt-6 block font-magic">...</span>
+            </h2>
+
+            <div class="flex flex-col md:flex-row gap-6 justify-center mt-8">
+                <button onclick="handleFinalResult(true)" class="magic-btn border-green-500 text-green-400">Yes, that's it!</button>
+                <button onclick="handleFinalResult(false)" class="magic-btn border-red-500 text-red-400">No, incorrect.</button>
+            </div>
+        </section>
+
+        <section id="screen-end" class="hidden text-center space-y-6 w-full">
+            <h1 id="end-title" class="text-5xl font-magic font-bold text-white"></h1>
+            <p id="end-message" class="text-xl text-soft"></p>
+            <button onclick="resetGame()" class="magic-btn mt-8">Play Again</button>
+        </section>
+
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

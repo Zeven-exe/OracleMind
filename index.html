@@ -6,6 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7c3aed">
+    
     <title>OracleMind | AI Mind Reader</title>
     <meta name="description" content="OracleMind is an AI-powered game that guesses your password using social engineering logic. Play the mind-reading challenge now.">
     <meta name="keywords" content="OracleMind, AI Game, Password Guesser, Mind Reader, Akinator Alternative, Artificial Intelligence">
@@ -13,9 +16,9 @@
 
     <meta property="og:title" content="OracleMind | The AI That Reads Thoughts">
     <meta property="og:description" content="Think of a password. I will guess it using social engineering and AI mutations. Dare to play?">
-    <meta property="og:image" content="https://oraclemind.netlify.app/genie_think.png"> <meta property="og:url" content="https://oraclemind.netlify.app">
+    <meta property="og:image" content="https://oraclemind.netlify.app/genie_think.png">
+    <meta property="og:url" content="https://oraclemind.netlify.app">
     <meta property="og:type" content="website">
-    <meta name="theme-color" content="#7c3aed">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
@@ -38,6 +41,14 @@
                     }
                 }
             }
+        }
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('App Installed Successfully!'))
+            .catch(err => console.log('App Install Failed', err));
         }
     </script>
 </head>

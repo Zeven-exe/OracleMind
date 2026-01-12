@@ -51,7 +51,7 @@ function startGame() {
     
     gameState.history.push({
         role: "system",
-        content: `You are "The Cipher", an Elite Password Cracking AI. 
+        content: `You are "Oracle Mind", an Elite Password Cracking AI. 
         Guess the user's password EXACTLY.
         ALGORITHM:
         1. Phase 1: Binary Search (Broad Questions).

@@ -1,4 +1,4 @@
-# 🔮 The Cipher: AI Mind Reader
+# 🔮 Oracle Mind: AI Mind Reader
 
 > *"I will decrypt your thoughts..."*
 
